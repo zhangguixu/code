@@ -22,7 +22,8 @@
     * testModules : 待测试的模块
     * tests : 模块的测试代码
 
-* Grunfile.js: 使用grunt作为构建工具，来构建整个代码合并，测试的流程
+* Gruntfile.js: 使用grunt作为构建工具，来构建整个代码合并，测试的流程
+* external : 一些辅助的文件，例如qunit.js、qunit.css
 
 ### 1.2 工作流程 
 
