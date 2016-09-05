@@ -1,4 +1,3 @@
-/* ---目标文件--- */
 (function(){
 
     QUnit.module("Cookie", {

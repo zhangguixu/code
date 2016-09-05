@@ -72,6 +72,22 @@ module.exports = function(grunt) {
         watch : {
             files : ["src/**/*.js", "test/*.js"],
             tasks : ["jshint", "concat", "qunit"]
+        },
+
+        // 搭建一个server
+        connect : {
+            server : {
+                options : {
+                    protocol : "http",
+                    port : 8080,
+                    hostname : "*",
+                    keepalive : true,
+                    base:["."],
+                    open : { // 只能打开默认的浏览器
+                        target : "http://localhost:8080/test/test.html"
+                    }
+                }
+            }
         }
     });
 
@@ -81,6 +97,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-contrib-qunit");
     grunt.loadNpmTasks("grunt-contrib-uglify");
     grunt.loadNpmTasks("grunt-contrib-watch");
+    grunt.loadNpmTasks("grunt-contrib-connect");
 
     // 默认任务
     grunt.registerTask("default", ["concat:testModule", "concat:test"]);
@@ -89,5 +106,5 @@ module.exports = function(grunt) {
     grunt.registerTask("concatfile", ["concat"]);
 
     // 单元测试任务
-    grunt.registerTask("unittest", ["jshint", "concat:testModule", "concat:test", "qunit"]);
+    grunt.registerTask("unittest", ["jshint", "concat:testModule", "concat:test", "qunit", "connect:server"]);
 };

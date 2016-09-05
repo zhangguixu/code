@@ -43,3 +43,4 @@
 
 3. 为了避免一个模块一个测试页面（其实不太需要），保证测试入口文件唯一（test/test.html），我使用grunt构建工具和配置文件test.json的方式，来实现配置测试，grunt会读取我们的配置文件，将文件合并到统一的`module.js`和`testinit.js`，然后在测试入口文件中进行测试。
 
+4. 使用`grunt-contrib-connect`，打开页面，可以在多个浏览器进行兼容性测试。

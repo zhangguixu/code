@@ -1,4 +1,5 @@
 {
-    "testModules" : ["demo.js"],
-    "tests" : ["test.demo.js"]
+    "testModules" : ["cookie.js"],
+    "tests" : ["test.cookie.js"],
+    "browser" : ""
 }
