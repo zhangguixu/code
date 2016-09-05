@@ -1,0 +1,4 @@
+{
+    "testModules" : ["demo.js"],
+    "tests" : ["test.demo.js"]
+}
