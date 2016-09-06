@@ -142,6 +142,26 @@ module.exports = function(grunt) {
                             }, 6000);
                         });
 
+                        // jsonp 请求
+                        middlewares.unshift(function(req, res, next){
+                            if(req.url.indexOf("jsonp") < 0){
+                                return next();
+                            }
+                            var ret = parse(req.url.substring(req.url.indexOf("?")+1));
+                            var callback = ret.callback;
+                            delete ret.callback;
+                            res.end(callback + "(" + JSON.stringify(ret) + ")");
+                        });
+
+                        // 报 404 error
+                        middlewares.unshift(function(req, res, next){
+                            if(req.url.indexOf("error") < 0){
+                                return next();
+                            }
+                            res.writeHead(404, {"Content-Type" : "application/json"});
+                            res.end();
+                        });
+
                         return middlewares;
                     }
                 }

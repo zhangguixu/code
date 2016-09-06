@@ -5,7 +5,7 @@
             this.xhr = require("xhr");
             this.info = {
                 "name":"zhangguixu",
-                "passward":"123"
+                "password":"123"
             };
         }
     });
@@ -32,7 +32,7 @@
             url : "/data",
             data : {
                 "name" : "zhangguixu",
-                "passward" : "123"
+                "password" : "123"
             },
             success : function (ret){
                 console.log(ret);
@@ -50,7 +50,7 @@
             url : "/data",
             data : {
                 "name" : "zhangguixu",
-                "passward" : "123"
+                "password" : "123"
             },
             success : function (ret){
                 console.log(ret);

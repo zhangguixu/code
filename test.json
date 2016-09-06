@@ -1,6 +1,6 @@
 {
-    "testModules" : ["cookie.js", "xhr.js"],
-    "tests" : ["test.cookie.js", "test.xhr.js"],
+    "testModules" : ["cookie.js", "xhr.js", "jsonp.js"],
+    "tests" : ["test.cookie.js", "test.xhr.js", "test.jsonp.js"],
     "ajax" : {
         "/user/info" : "user.json"
     }
