@@ -29,8 +29,8 @@ module.exports = function(grunt) {
         }
     }
 
-    // 解析参数post
-    var decode = function (s) {
+    // 解析参数
+    var parse = function (s) {
         var params = s.toString().split("&");
         var ret = {}, p;
         for(var i = 0; i < params.length; i++){
@@ -116,20 +116,19 @@ module.exports = function(grunt) {
                         });
                         // 返回请求的数据
                         middlewares.unshift(function(req, res, next){
-                            var url = req.url;
-                            if(url.indexOf("data") < 0){
+                            if(req.url.indexOf("data") < 0){
                                 return next();
                             }
-                            var ret;
-
-                            if(url.indexOf("?") > 0){ // get 请求，直接在url上进行获取
-                                ret = decode(url.substring(url.indexOf("?")+1));
+                            var ret, url = req.url;
+                            if(req.method.toUpperCase() == "GET"){ // get 请求，直接在url上进行获取
+                                ret = parse(url.substring(url.indexOf("?")+1));
                                 res.end(JSON.stringify(ret));
                             } else { // post请求，获取请求体
-                                 req.on("data", function (rawData){
-                                    res.end(JSON.stringify(decode(rawData)));
+                                req.on("data", function (rawData){
+                                    ret = parse(rawData);
+                                    res.end(JSON.stringify(parse(rawData)));
                                 });
-                            }                        
+                            }                     
                         });
                         return middlewares;
                     }
