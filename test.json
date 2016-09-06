@@ -1,5 +1,7 @@
 {
     "testModules" : ["cookie.js"],
     "tests" : ["test.cookie.js"],
-    "browser" : ""
+    "ajax" : {
+        "/user/info" : "user.json"
+    }
 }

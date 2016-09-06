@@ -19,11 +19,13 @@
 * dist: 合并的待测试的代码
 * test.json: 测试的文件配置
 
-    * testModules : 待测试的模块
-    * tests : 模块的测试代码
+    * testModules : 数组，待测试的模块
+    * tests : 数组，模块的测试代码
+    * ajax : 默认为false，当不为false时，可以配置路径和对应的数据文件，例如{"/user/info" : "user.json"}
 
 * Gruntfile.js: 使用grunt作为构建工具，来构建整个代码合并，测试的流程
 * external : 一些辅助的文件，例如qunit.js、qunit.css
+* data : 存储一些测试数据，当测试ajax的时候可以使用到
 
 ### 1.2 工作流程 
 
@@ -44,3 +46,5 @@
 3. 为了避免一个模块一个测试页面（其实不太需要），保证测试入口文件唯一（test/test.html），我使用grunt构建工具和配置文件test.json的方式，来实现配置测试，grunt会读取我们的配置文件，将文件合并到统一的`module.js`和`testinit.js`，然后在测试入口文件中进行测试。
 
 4. 使用`grunt-contrib-connect`，打开页面，可以在多个浏览器进行兼容性测试。
+
+5. 使用`grunt-contrib-connect`的middlewares来进行请求的拦截，然后实现前后端通信，满足例如ajax模块的请求，对其进行测试。
