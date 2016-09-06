@@ -11,7 +11,6 @@
     });
 
     QUnit.test("get test", function (assert) {
-    
         var done = assert.async();
         var self = this;
         this.xhr.send({
@@ -25,7 +24,7 @@
         });
     });
 
-    QUnit.test("get test parameters", function(assert) {
+    QUnit.test("post test with parameters", function(assert) {
         var done = assert.async();
         var self = this;
         this.xhr.send({
@@ -43,10 +42,35 @@
         });
     });
 
-    // QUnit.module("xhr error test", {
-    //     before : function () {
-    //         this.xhr = require("xhr");
-    //     }
-    // });
+    QUnit.test("get test with parameters", function(assert) {
+        var done = assert.async();
+        var self = this;
+        this.xhr.send({
+            type : "get",
+            url : "/data",
+            data : {
+                "name" : "zhangguixu",
+                "passward" : "123"
+            },
+            success : function (ret){
+                console.log(ret);
+                assert.deepEqual(self.info, ret, "返回json数据");
+                done();
+            }
+        });
+    });
+
+    QUnit.test("timeout test", function(assert){
+        var done = assert.async();
+        this.xhr.send({
+            type : "get",
+            url : "/timeout",
+            timeout : 2000,
+            error : function(ret) {
+                assert.equal("timeout", ret.msg, "进行超时处理");
+                done();
+            }
+        });
+    });
 
 })();

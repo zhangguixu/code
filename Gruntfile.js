@@ -48,7 +48,7 @@ module.exports = function(grunt) {
         
         // jshint
         jshint : {
-            files : ["Gruntfile.js", "src/**/*.js", "test/*.js"],
+            files : ["Gruntfile.js", "src/**/*.js", "test/**/*.js"],
             options : {
                 trailing : true,
                 unused : true
@@ -130,6 +130,18 @@ module.exports = function(grunt) {
                                 });
                             }                     
                         });
+
+                        // 超时请求
+                        middlewares.unshift(function(req, res, next){
+                            if(req.url.indexOf("timeout") < 0){
+                                return next();
+                            }
+                            // 否则一直挂起
+                            setTimeout(function () {
+                                res.end();
+                            }, 6000);
+                        });
+
                         return middlewares;
                     }
                 }
