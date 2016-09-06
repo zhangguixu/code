@@ -29,6 +29,18 @@ module.exports = function(grunt) {
         }
     }
 
+    // 解析参数post
+    var decode = function (s) {
+        var params = s.toString().split("&");
+        var ret = {}, p;
+        for(var i = 0; i < params.length; i++){
+            p = params[i].split("=");
+            ret[p[0]] = p[1];
+        }
+        return ret;
+    };
+
+
     // 配置任务
     grunt.initConfig({
         // 读取package.json文件
@@ -38,7 +50,8 @@ module.exports = function(grunt) {
         jshint : {
             files : ["Gruntfile.js", "src/**/*.js", "test/*.js"],
             options : {
-                trailing : true
+                trailing : true,
+                unused : true
             }
         },
 
@@ -61,7 +74,8 @@ module.exports = function(grunt) {
 
         // 单元测试
         qunit : {
-            files : ["test/test.html"]
+            files : ["test/test.html"],
+            timeout : 50000
         },
 
         // 压缩混淆文件
@@ -95,11 +109,27 @@ module.exports = function(grunt) {
                         target : "http://localhost:8080/test/test.html"
                     },
                     middleware: function(connect, options, middlewares) {
+                        // get
                         middlewares.unshift(function(req, res, next) {
-                            console.log(req.url);
-                            
                             if(!ajaxConf || !ajaxConf.hasOwnProperty(req.url))return next();
                             res.end(JSON.stringify(ajaxConf[req.url]));
+                        });
+                        // 返回请求的数据
+                        middlewares.unshift(function(req, res, next){
+                            var url = req.url;
+                            if(url.indexOf("data") < 0){
+                                return next();
+                            }
+                            var ret;
+
+                            if(url.indexOf("?") > 0){ // get 请求，直接在url上进行获取
+                                ret = decode(url.substring(url.indexOf("?")+1));
+                                res.end(JSON.stringify(ret));
+                            } else { // post请求，获取请求体
+                                 req.on("data", function (rawData){
+                                    res.end(JSON.stringify(decode(rawData)));
+                                });
+                            }                        
                         });
                         return middlewares;
                     }
@@ -123,7 +153,7 @@ module.exports = function(grunt) {
     grunt.registerTask("concatfile", ["concat"]);
 
     // 普通单元测试任务
-    grunt.registerTask("unittest", ["jshint", "concat:testModule", "concat:test", "qunit", "connect:server"]);
+    grunt.registerTask("unittest", ["jshint", "concat:testModule", "concat:test", "connect:server"]);
 
    
 };
