@@ -48,3 +48,21 @@
 4. 使用`grunt-contrib-connect`，打开页面，可以在多个浏览器进行兼容性测试。
 
 5. 使用`grunt-contrib-connect`的middlewares来进行请求的拦截，然后实现前后端通信，满足例如ajax模块的请求，对其进行测试。
+
+## 2. 模块
+
+### 2.1 AJAX
+
+1. jsonp
+2. xhr
+3. ping
+
+### 2.2 dom
+
+1. form:serialize, form:isTypeSupported
+
+### 2.3 storage
+
+1. cookie:set, cookie:get, cookie:clear
+
+

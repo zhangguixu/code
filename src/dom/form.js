@@ -53,7 +53,7 @@ define("form", function(require, exports, module){
                     break;
                 case "checkbox":
                 case "radio":
-                    if(!el.checked)break;
+                    if(!el.checked)break; /** 添加下面的注释，才能通过jshint */
                     /* falls through */
                 default :
                     if(el.name.length) {
