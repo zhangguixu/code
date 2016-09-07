@@ -5,11 +5,12 @@
   "description": "构建自己的代码库",
   "main": "index.js",
   "scripts": {
-    "test": "grunt unittest"
+    "test": "grunt serve"
   },
   "author": "zhangguixu",
   "license": "MIT",
   "devDependencies": {
+    "connect-livereload": "^0.5.4",
     "grunt": "^1.0.1",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-connect": "^1.0.2",

@@ -49,6 +49,8 @@
 
 5. 使用`grunt-contrib-connect`的middlewares来进行请求的拦截，然后实现前后端通信，满足例如ajax模块的请求，对其进行测试。
 
+6. 使用`connect-livereload`插件，结合watch的livereload属性和connect-livereload可以实现页面的自动刷新，重新进行代码测试。
+
 ## 2. 模块
 
 ### 2.1 AJAX
@@ -64,5 +66,9 @@
 ### 2.3 storage
 
 1. cookie:set, cookie:get, cookie:clear
+
+### 2.4 util
+
+1. array:indexOf, array:unique
 
 
