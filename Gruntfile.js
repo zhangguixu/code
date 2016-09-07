@@ -67,7 +67,7 @@ module.exports = function(grunt) {
             },
             test : {
                 src : tests,
-                dest : "test/testinit.js",
+                dest : "test/tests.js",
                 nonull : true
             }        
         },  

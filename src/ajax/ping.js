@@ -2,7 +2,7 @@ define("ping", function(require, exports, module){
     
     function send(url) {
         var img = new Image();
-        img.onload = img.onerror = function () {}
+        img.onload = img.onerror = function () {};
         img.src = url;
     }
     
