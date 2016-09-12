@@ -102,7 +102,7 @@ module.exports = function(grunt) {
 
         // 搭建一个server
         connect : {
-        
+            
             server : { // 用于打开测试页面
                 options : {
                     protocol : "http",
@@ -189,16 +189,13 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-contrib-watch");
     grunt.loadNpmTasks("grunt-contrib-connect");
 
-    // 默认任务
-    grunt.registerTask("default", ["concat:testModule", "concat:test"]);
-
-    // 拼接任务
-    grunt.registerTask("concatfile", ["concat"]);
+    // 初始化任务
+    grunt.registerTask("init", ["concat:testModule", "concat:test"]);
 
     // 普通单元测试任务
     grunt.registerTask("unittest", ["jshint", "concat:testModule", "concat:test", "connect:server"]);
 
     // 监视测试任务，自动刷新页面
-    grunt.registerTask("serve", ["connect:server", "watch:livereload"]);
+    grunt.registerTask("serve", ["jshint", "concat:testModule", "concat:test", "connect:server", "watch:livereload"]);
    
 };
