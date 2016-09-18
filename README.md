@@ -71,4 +71,8 @@
 
 1. array:indexOf, array:unique
 
+### 2.4 event
+
+1. fixEvent
+
 

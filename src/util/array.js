@@ -1,9 +1,5 @@
 define("array", function(require, exports, module){
     
-    // function reverse(arr){
-
-    // }
-
     // 在sizzlejs中使用了这个实现，根据jsperf的测试性能，比原生的实现性能好一点
     function indexOf(arr, elem){
         var i = 0, 
