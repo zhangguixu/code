@@ -1,15 +1,28 @@
 define("event", function (require, exports, module){
     
      var cache = {},
-        guidCounter = 1;
+         elGuid = 1,
+         fnGuid = 1;
 
-    function returnTrue () {return true;}
-    function returnFalse () {return false;}
-    function getExpando() {return "data" + (new Date).getTime();}
+    // 辅助函数
+    function returnTrue () {
+        return true;
+    }
+    function returnFalse () {
+        return false;
+    }
+    function getExpando() {
+        return "data" + (new Date).getTime();
+    }
+    function isEmpty(o) {
+        for(var prop in o){
+            return false;
+        }
+        return true;
+    }
 
 
     // 修复已有的event对象的属性，使其暴漏与标准一样的API
-
     function fixEvent(event) {
         if(!event || !event.stopPropagation) { // 判断是否需要修复
             var old = event || window.event; // IE的event从window对象中获取
@@ -87,7 +100,7 @@ define("event", function (require, exports, module){
         var expando = getExpando();
         var guid = el[expando];
         if(!guid){
-            guid = el[expando] = guidCounter++;
+            guid = el[expando] = elGuid++;
             cache[guid] = {};
         }
         return cache[guid];
@@ -106,7 +119,118 @@ define("event", function (require, exports, module){
         }
     }
 
+    function tidyUp(el, type){
+        var data = getData(el);
+
+        // 清理el的type事件的回调程序
+        if(data.handlers[type].length === 0){
+            delete data.hanlders[type];
+
+            if(el.removeEventListener){
+                el.removeEventListener(type, data.dispatcher, false);
+            } else if (el.detachEvent) {
+                el.detach("on" + type, data.dispatcher);
+            }
+        }
+
+        // 判断是否还有其他类型的事件处理程序
+        if(isEmpty(data.handlers)){
+            delete data.handlers;
+            delete data.dispatcher;
+        }
+
+        // 判断是否还需要data
+        if(isEmpty(data)){
+            removeData(el);
+        }
+    }
+
+
+    // 绑定事件
+    function addEvent(el, type, fn) {
+        var data = getData(el);
+
+        if(!data.handlers)data.handlers = {};
+
+        if(!data.handlers[type])data.handlers[type] = [];
+
+        if(!fn.guid)fn.guid = fnGuid++;
+
+        data.handlers[type].push(fn);
+
+        // 为该元素的事件绑定统一的事件处理程序
+        if(!data.dispatcher){
+            data.disabled = false;
+            data.dispatcher = function (event) {
+                if(data.disabled)return;
+                event = fixEvent(event);
+                var handlers = data.handlers[type];
+                if(handlers) {
+                    for(var i = 0, len = handlers.length; i < len; i++){
+                        handlers[i].call(el, event);
+                    }
+                }
+            };
+        }
+
+        if(data.handlers.length == 1){
+            if(el.addEventListener){
+                el.addEventListener(type, data.dispatcher, false);
+            } else if(el.attachEvent){
+                el.attachEvent("on" + type, data.dispatcher);
+            }
+        }
+    }
+
+    // 解绑事件
+    function removeEvent(el, type, fn){
+        var data = getData(el);
+
+        if(!data.handlers)return;
+
+        var removeType = function(t) {
+            data.handlers[t] = [];
+            tidyUp(el, t);
+        };
+
+        // 删除所有的处理程序
+        if(!type){
+            for(var t in data.handlers){
+                removeType(t);
+            }
+            return;
+        }
+
+        var handlers = data.handlers[type];
+        if(!handlers)return;
+
+        if(!fn){
+            removeType(type);
+            return;
+        }
+
+        // 删除特定的事件处理程序，这个时候根据guid来进行删除
+        // 这里需要考虑的就是可能一个事件处理程序被绑定到一个事件类型多次
+        // 因此，这里需要用到handlers.length，删除的时候，需要n--
+
+        if(fn.guid){
+            for(var n = 0; n < handlers.length; n++){
+                if(handlers[n] === fn.guid){
+                    handlers.splice(n--, 1);
+                }
+            }
+        }
+
+        // 返回之前清理资源
+        tidyUp(el, type);
+    }
+
+    module.exports = {
+        getData : getData,
+        removeData : removeData,
+        fixEvent : fixEvent,
+        addEvent : addEvent,
+        removeEvent : removeEvent
+    };
     
-
-
 });
