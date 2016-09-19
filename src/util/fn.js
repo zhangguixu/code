@@ -16,7 +16,7 @@ define("fn", function(require, exports, module){
                 t_curr = Date.now();
             
             // 先清理定时器
-            timer && clearTimeout(timer);
+            if(timer) {clearTimeout(timer);}
             
             // 判断时间间隔
             if(!t_start){
@@ -31,7 +31,7 @@ define("fn", function(require, exports, module){
                    fn.apply(self, args); 
                 }, delay);
             }
-        }
+        };
     }
 
     // 绑定作用域和函数柯里化，es5中bind的原生实现 
@@ -41,7 +41,7 @@ define("fn", function(require, exports, module){
             var innerArgs = Array.prototype.slice.call(arguments);
             var finalArgs = args.concat(innerArgs);
             fn.apply(scope, finalArgs);
-        }
+        };
     }
 
     // 柯里化，创建已经设置了一个或多个参数的函数
@@ -51,7 +51,7 @@ define("fn", function(require, exports, module){
             var innerArgs = Array.prototype.slice.call(arguments);
             var finalArgs = args.concat(innerArgs);
             return fn.apply(null, finalArgs);
-        }
+        };
     }
 
 

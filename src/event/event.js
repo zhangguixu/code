@@ -2,7 +2,8 @@ define("event", function (require, exports, module){
     
      var cache = {},
          elGuid = 1,
-         fnGuid = 1;
+         fnGuid = 1,
+         expando = "data" + (new Date()).getTime();
 
     // 辅助函数
     function returnTrue () {
@@ -11,11 +12,9 @@ define("event", function (require, exports, module){
     function returnFalse () {
         return false;
     }
-    function getExpando() {
-        return "data" + (new Date).getTime();
-    }
     function isEmpty(o) {
-        for(var prop in o){
+        var prop;
+        for(prop in o){
             return false;
         }
         return true;
@@ -48,7 +47,7 @@ define("event", function (require, exports, module){
                 event.returnValue = false;
                 // 标识，event对象是否调用了preventDefault函数
                 event.isDefaultPrevented = returnTrue; 
-            }
+            };
             /*
                 可以调用event.isDefaultPrevented()来查看是否调用event.preventDefault
             */
@@ -57,7 +56,7 @@ define("event", function (require, exports, module){
             event.stopPropagation = function () {
                 event.cancelBubble = true;
                 event.isPropagationStopped = returnTrue;
-            }
+            };
 
             event.isPropagationStopped = returnFalse;
 
@@ -66,12 +65,12 @@ define("event", function (require, exports, module){
             event.stopImmediatePropagation = function () {
                 event.isImmediatePropagationStopped = returnTrue;
                 event.stopPropagation();
-            }
+            };
 
             event.isImmediatePropagationStopped = returnFalse;
 
             // 鼠标坐标，返回文档坐标
-            if(event.clientX != null){
+            if(event.clientX !== null){
                 var doc = document.documentElement, body = document.body;
 
                 event.pageX = event.clientX +
@@ -86,7 +85,7 @@ define("event", function (require, exports, module){
             event.which = event.charCode || event.keyCode;
 
             // 鼠标点击模式 left -> 0 middle -> 1 right -> 2
-            if(event.button != null){
+            if(event.button !== null){
                 event.button = (event.button & 1 ? 0 : 
                         (event.button & 4 ? 1 : 
                             (event.button & 2 ? 2 : 0)));
@@ -97,7 +96,6 @@ define("event", function (require, exports, module){
 
 
     function getData(el) {
-        var expando = getExpando();
         var guid = el[expando];
         if(!guid){
             guid = el[expando] = elGuid++;
@@ -111,7 +109,7 @@ define("event", function (require, exports, module){
         if(!guid) return;
         delete cache[guid];
         try {
-            delete el.expando;
+            delete el[expando];
         } catch(e){
             if(el.removeAttribute){
                 el.removeAttribute(expando);
@@ -225,12 +223,46 @@ define("event", function (require, exports, module){
         tidyUp(el, type);
     }
 
+    // 脚本触发事件
+    function triggerEvent(el, event){
+        var data = getData(el),
+            parent = el.parentNode || el.ownerDocument; // 用于事件冒泡
+        
+        if(typeof event == "string"){
+            event = {
+                type : event,
+                target : el
+            };
+        }
+
+        event = fixEvent(event);
+
+        // 触发绑定的事件处理程序
+        if(data.dispatcher){
+            data.dispatcher.call(el, event);
+        }
+
+        // 事件冒泡 或者 执行默认行为
+        if(parent && !event.isPropagationStopped()){
+            triggerEvent(parent, event);
+        } else if (!parent && !event.isDefaultPrevented()){
+            var targetData = getData(event.target);
+            // 检测是否有默认行为，例如el.focus()?
+            if(event.target[type]){
+                targetData.disabled = true; // 先禁用
+                event.target[type]();
+                targetData.disabled = false;
+            }
+        }
+    }
+
     module.exports = {
         getData : getData,
         removeData : removeData,
         fixEvent : fixEvent,
         addEvent : addEvent,
-        removeEvent : removeEvent
+        removeEvent : removeEvent,
+        triggerEvent : triggerEvent
     };
     
 });
